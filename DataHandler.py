@@ -91,6 +91,18 @@ class DataHandler:
         delta = today - info[3]
         return [info[6], info[1], delta.round(freq='1440min').days]
 
+    def career_by_id(self, id):
+        """
+        returns: [id, position, full name, start date, end date]
+        """
+        ar = self.movement.loc[lambda df: df['id'] == 42566, :][['id', 'position', 'FULL_NAME', 'START_DATE', 'END_DATE']].values
+        ar = ar[np.argsort(ar[:,3], axis=0)]
+        for i in range(ar.shape[0]-1):
+            ar[i,4] = min(ar[i,4], ar[i+1,3])
+        if (self.current_position_by_id(id)[2] > 0): # if currently working set end date as today's date
+            ar[-1,4] = pd.Timestamp(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+        return ar
+
     def suggested_courses_by_id_and_position(self, id, position):
         ids = self.movement[self.movement.full_position == position].id.unique()
         all_courses = self.courses[self.courses.id.isin(ids)]
