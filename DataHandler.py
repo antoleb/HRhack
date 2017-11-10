@@ -10,7 +10,6 @@ class DataHandler:
         self.communication = communication
         self.movement = movement
         self.performance = performance
-        self.today = pd.Timestamp(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 
         self.movement['full_position'] = self.movement[['position', 'Department']].apply(lambda x: "{}/{}".format(x[0], x[1]),
     axis=1)
@@ -86,7 +85,8 @@ class DataHandler:
         """
         if (self.performance.loc[lambda df: df['ID']==id, :]['Статус'].values[0] == 'Бывший сотрудник'):
             return ['', '', 0]
-        info = self.movement.loc[movement.loc[lambda df: df['id']==id, :]['START_DATE'].idxmax(), :].values
+        info = self.movement.loc[self.movement.loc[lambda df: df['id']==id, :]['START_DATE'].idxmax(), :].values
+        today = pd.Timestamp(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
         delta = today - info[3]
         return [info[6], info[1], delta.round(freq='1440min').days]
 
