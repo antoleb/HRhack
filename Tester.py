@@ -4,6 +4,7 @@ from DataHandler import DataHandler
 from NaiveBias import NaiveBias
 from TfIdfBias import TfIdfBias
 
+
 class Tester:
     def __init__(self, dataHandler):
         self.dataHandler = dataHandler
@@ -21,7 +22,6 @@ class Tester:
         positions = self.dataHandler.positions_by_id(id)
         position = positions[-1]
         skills = testDataHandler.skills_by_position(position)
-        id_skills = self.dataHandler.skills_by_id(id)
         model = NaiveBias(skills)
         all_ids, skill_list = self.dataHandler.all_skills()
         relevant = self.get_relevant(all_ids, position, testDataHandler).astype(bool)
@@ -33,7 +33,6 @@ class Tester:
         positions = self.dataHandler.positions_by_id(id)
         position = positions[-1]
         skills = testDataHandler.skills_by_position(position)
-        id_skills = self.dataHandler.skills_by_id(id)
         model = TfIdfBias(skills, testDataHandler, position)
         all_ids, skill_list = self.dataHandler.all_skills()
         relevant = self.get_relevant(all_ids, position, testDataHandler).astype(bool)

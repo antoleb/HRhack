@@ -42,7 +42,7 @@ class DataHandler:
         """
         returns: ids
         """
-        return self.movement.loc[lambda df: df['full_position']==full_position, :]['id'].values
+        return self.movement.loc[lambda df: df['full_position'] == full_position, :]['id'].values
 
     def skills_by_position(self, position):
         """
