@@ -111,7 +111,7 @@ class DataHandler:
         """
         returns: [id, position, full name, start date, end date]
         """
-        ar = self.movement.loc[lambda df: df['id'] == 42566, :][['id', 'position', 'FULL_NAME', 'START_DATE', 'END_DATE']].values
+        ar = self.movement.loc[lambda df: df['id'] == id, :][['id', 'position', 'FULL_NAME', 'START_DATE', 'END_DATE']].values
         ar = ar[np.argsort(ar[:,3], axis=0)]
         for i in range(ar.shape[0]-1):
             ar[i,4] = min(ar[i,4], ar[i+1,3])
@@ -154,6 +154,18 @@ class DataHandler:
         unique_moves, counts = np.unique(next_move, return_counts=True, axis=0)
         srt = counts.argsort()[::-1]
         return np.concatenate([unique_moves[srt], counts[srt].reshape(-1,1)], axis=1)
+
+    def get_mean_work_time_and_contacts(self, id, current_pos, desiered_pos):
+        current_pos_ids = self.movement[self.movement.full_position == current_pos].id.unique()
+        desiered_pos_ids = self.movement[self.movement.full_position == desiered_pos].id.unique()
+        both_ids = np.intersect1d(current_pos_ids, desiered_pos_ids)
+        time_list = []
+        for id_ in both_ids:
+            end = self.last_start_time(id_, desiered_pos)
+            start = self.last_start_time(id_, current_pos)
+            time_list.append(end - start)
+
+        return both_ids, np.mean(time_list)
 
 
     def remove_id(self, id):
