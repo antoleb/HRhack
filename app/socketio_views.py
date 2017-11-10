@@ -78,8 +78,9 @@ def find_canditates(json):
     ]
 
     emit('candidates', make_response(True, candidates))
-
-    import pprint
-    pprint.pprint(candidates[0])
     # except:
     #     emit('candidates', make_response(False, 'Bad args'))
+
+@socketio.on('get_all_positions')
+def all_positions():
+    emit('all_positions', make_response(True, data_handler.unique_full_positions()))

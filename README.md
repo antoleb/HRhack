@@ -39,3 +39,17 @@ ___
 ]
 ```
 ___
+**name:** `get_all_positions`\
+**args:** -\
+**returns:**
+```json
+{
+    "department_name": [
+        "position_1",
+        "position_2",
+        ...
+    ],
+    ...
+}
+```
+___
