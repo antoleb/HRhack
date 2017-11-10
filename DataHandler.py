@@ -155,6 +155,18 @@ class DataHandler:
         srt = counts.argsort()[::-1]
         return np.concatenate([unique_moves[srt], counts[srt].reshape(-1,1)], axis=1)
 
+    def get_mean_work_time_and_contacts(self, id, current_pos, desiered_pos):
+        current_pos_ids = self.movement[self.movement.full_position == current_pos].id.unique()
+        desiered_pos_ids = self.movement[self.movement.full_position == desiered_pos].id.unique()
+        both_ids = np.intersect1d(current_pos_ids, desiered_pos_ids)
+        time_list = []
+        for id_ in both_ids:
+            end = self.last_start_time(id_, desiered_pos)
+            start = self.last_start_time(id_, current_pos)
+            time_list.append(end - start)
+
+        return both_ids, np.mean(time_list)
+
 
     def remove_id(self, id):
         """
