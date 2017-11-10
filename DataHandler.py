@@ -53,6 +53,9 @@ class DataHandler:
        '2014 I Полугодие']
         df['performance'] = df[perf_col].values.tolist()
 
+	df['TAGNAME'] = [row[1] if type(row[1]) == list else list() for row in df['TAGNAME'].iteritems()]
+        df['performance'] = [row[1] if type(row[1]) == list else list() for row in df['performance'].iteritems()]
+
         need_col =['performance', 'TAGNAME']
         return df[need_col].reset_index().values
 
