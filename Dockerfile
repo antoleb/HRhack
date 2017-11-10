@@ -1,6 +1,8 @@
 FROM ubuntu:16.04
 MAINTAINER Alexander Pushin "work@apushin.com"
 
+ENV LANG=C.UTF-8
+
 RUN apt-get update && apt-get install -y \
     python3-pip \
     uwsgi

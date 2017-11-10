@@ -29,7 +29,7 @@ def make_candidate_dict(data_handler, id_, sought_department, sought_position):
     """
 
     candidate_dict = {
-        'id': id_,
+        'id': int(id_),
     }
 
     department, position, work_time = data_handler.current_position_by_id(id_)
@@ -41,15 +41,17 @@ def make_candidate_dict(data_handler, id_, sought_department, sought_position):
             'id': career[0],
             'position': career[1],
             'department': career[2],
-            'start_timestamp': career[3],
-            'end_timestamp': career[4],
+            'start_timestamp': career[3].timestamp(),
+            'end_timestamp': career[4] if career[4] is None else career[3].timestamp(),
         } for career in data_handler.career_by_id(id_)
     ]
 
-    candidate_dict['finished_courses'] = data_handler.career_by_id(id_)
-    candidate_dict['suggested_courses'] = data_handler.suggested_courses_by_id_and_position(
-        id_, finder.make_internal_position(sought_department, sought_position)
+    candidate_dict['finished_courses'] = list(data_handler.courses_by_id(id_))
+    candidate_dict['suggested_courses'] = list(data_handler.suggested_courses_by_id_and_position(
+        id_, finder.make_internal_position(sought_department, sought_position))
     )
+
+    return candidate_dict
 
 
 data_handler = init_datahandler()
@@ -72,8 +74,12 @@ def find_canditates(json):
     sorted_candidates = finder.find_sorted_candidates(json['department'], json['position'])
     candidates = [
         make_candidate_dict(data_handler, candidate_id, sought_department, sought_position)
-        for candidate_id in sorted_candidates
+        for candidate_id in sorted_candidates[:5]
     ]
+
     emit('candidates', make_response(True, candidates))
+
+    import pprint
+    pprint.pprint(candidates[0])
     # except:
     #     emit('candidates', make_response(False, 'Bad args'))

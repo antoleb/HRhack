@@ -11,9 +11,21 @@ ___
 ```json
 [
     {
-      id: 123,
-      department: 'department',
-      positii
+      "id": 123,
+      "department": "department_name",
+      "position": "position_name",
+      "finished_courses": ["name_1", ...],
+      "suggested_courses": ["name_1", ...],
+      "careers": [
+        {
+            "id": "45338"
+            "department": "name",
+            "position": "name",
+            "start_timestamp": 1214870400.0,
+            "end_timestamp": 1204588800.0
+        },
+        ...
+      ]
     },
     ...
 ]
