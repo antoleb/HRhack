@@ -2,7 +2,10 @@ FROM ubuntu:16.04
 MAINTAINER Alexander Pushin "work@apushin.com"
 
 RUN apt-get update && apt-get install -y \
+    python3-pip \
     uwsgi
+
+COPY data /data
 
 COPY requirements.txt /requirements.txt
 RUN pip3 install -r /requirements.txt

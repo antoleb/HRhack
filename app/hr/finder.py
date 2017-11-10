@@ -16,11 +16,11 @@ class Finder:
                 relevant[c] = 0
         return relevant
 
-    def _make_internal_position(self, department, position):
+    def make_internal_position(self, department, position):
         return position + '/' + department
 
     def find_sorted_candidates(self, department, position):
-        internal_position = self._make_internal_position(department, position)
+        internal_position = self.make_internal_position(department, position)
         skills = self._data_handler.skills_by_position(internal_position)
         model = TfIdfBayes(skills, self._data_handler, internal_position)
 

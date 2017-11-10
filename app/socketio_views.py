@@ -18,6 +18,40 @@ def init_datahandler(krok_file=KROK_FILE):
     return DataHandler(skills, courses, communication, movement, performance)
 
 
+def make_candidate_dict(data_handler, id_, sought_department, sought_position):
+    """
+    Args:
+        data_handler (DataHandler): fuck you
+        id (int): fuck you
+
+    Returns:
+        dict: candidate
+    """
+
+    candidate_dict = {
+        'id': id_,
+    }
+
+    department, position, work_time = data_handler.current_position_by_id(id_)
+    candidate_dict['department'] = department
+    candidate_dict['position'] = position
+
+    candidate_dict['careers'] = [
+        {
+            'id': career[0],
+            'position': career[1],
+            'department': career[2],
+            'start_timestamp': career[3],
+            'end_timestamp': career[4],
+        } for career in data_handler.career_by_id(id_)
+    ]
+
+    candidate_dict['finished_courses'] = data_handler.career_by_id(id_)
+    candidate_dict['suggested_courses'] = data_handler.suggested_courses_by_id_and_position(
+        id_, finder.make_internal_position(sought_department, sought_position)
+    )
+
+
 data_handler = init_datahandler()
 finder = Finder(data_handler)
 
@@ -29,11 +63,17 @@ def make_response(success, message):
     }
 
 
-@socketio.on('find_canditates')
+@socketio.on('find_candidates')
 def find_canditates(json):
-    try:
-        sorted_candidates = finder.find_sorted_candidates(json['department'], json['position'])
-    except:
-        emit('candidates', make_response(False, 'Bad args'))
+    # try:
+    sought_department = json['department']
+    sought_position = json['position']
 
-    emit('candidates', make_response(True, 'fuck_you'))
+    sorted_candidates = finder.find_sorted_candidates(json['department'], json['position'])
+    candidates = [
+        make_candidate_dict(data_handler, candidate_id, sought_department, sought_position)
+        for candidate_id in sorted_candidates
+    ]
+    emit('candidates', make_response(True, candidates))
+    # except:
+    #     emit('candidates', make_response(False, 'Bad args'))
