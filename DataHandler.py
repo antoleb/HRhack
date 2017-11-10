@@ -59,6 +59,21 @@ class DataHandler:
         need_col =['performance', 'TAGNAME']
         return df[need_col].reset_index().values
 
+    def courses_by_id(self, id):
+        """
+        returns: list of srtings from self.courses
+        """
+        return self.courses[self.courses.id == id]['Название обучения'].values
+    
+    def courses_by_position(self, position):
+        """
+        returns: [id, skills]
+        """
+        ids = self.ids_by_position(position)
+        df = self.courses.loc[lambda df: df['id'].isin(ids), :].groupby('id').agg(lambda x: x.tolist())
+        df['Название обучения'] = [row[1] if type(row[1]) == list else list() for row in df['Название обучения'].iteritems()]
+        return df['Название обучения'].reset_index().values
+
     def remove_id(self, id):
         """
         :param id:
