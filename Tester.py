@@ -18,12 +18,12 @@ class Tester:
     def test_without_id(self, id, modelConstructor):
         testDataHandler = self.dataHandler.remove_id(id)
         positions = self.dataHandler.positions_by_id(id)
-        position = positions[0]
+        position = positions[-1]
         skills = testDataHandler.skills_by_position(position)
         id_skills = self.dataHandler.skills_by_id(id)
         model = modelConstructor(skills)
         all_ids, skill_list = self.dataHandler.all_skills()
-        relevant = self.get_relevant(all_ids, skill_list, testDataHandler)
+        relevant = self.get_relevant(all_ids, position, testDataHandler).astype(bool)
         sorted_list = model.get_sorted(all_ids[relevant], skill_list[relevant])
 
         return sorted_list

@@ -38,13 +38,11 @@ class NaiveBias:
 
     def log_likehood(self, skill):
         description = self._build_one_hot_vector_by_list_(skill)
-        #return np.sum(np.log(self.freq_list) * description + np.log(1 - self.freq_list) * (1 - description))
-        return np.sum(np.log(self.freq_list) * description + np.log(1 - self.freq_list) * (1 - description))
+        return np.sum(np.log(1 - self.freq_list) * (1 - description))
 
     def get_sorted(self, ids, skill_list):
         scores = []
         for skill in skill_list:
             scores.append(self.log_likehood(skill))
-        #scores = np.array(scores)
-        return scores
+        scores = np.array(scores)
         return ids[np.argsort(-scores)]
