@@ -60,6 +60,7 @@ class TfIdfBias:
 
     def get_sorted(self, ids, skill_list):
         scores = []
+
         for skill in skill_list:
             scores.append(self.log_likehood(skill))
         scores = np.array(scores)
