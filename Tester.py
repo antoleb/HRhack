@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
-import DataHandler
-import NaiveBias
+from DataHandler import DataHandler
+from NaiveBias import NaiveBias
+from TfIdfBias import TfIdfBias
 
 class Tester:
     def __init__(self, dataHandler):
@@ -15,15 +16,26 @@ class Tester:
                 relevant[c] = 0
         return relevant
 
-    def test_without_id(self, id, modelConstructor):
+    def test_NaiveBias_without_id(self, id):
         testDataHandler = self.dataHandler.remove_id(id)
         positions = self.dataHandler.positions_by_id(id)
         position = positions[-1]
         skills = testDataHandler.skills_by_position(position)
         id_skills = self.dataHandler.skills_by_id(id)
-        model = modelConstructor(skills)
+        model = NaiveBias(skills)
         all_ids, skill_list = self.dataHandler.all_skills()
         relevant = self.get_relevant(all_ids, position, testDataHandler).astype(bool)
         sorted_list = model.get_sorted(all_ids[relevant], skill_list[relevant])
+        return sorted_list
 
+    def test_TfIdfBias_without_id(self, id):
+        testDataHandler = self.dataHandler.remove_id(id)
+        positions = self.dataHandler.positions_by_id(id)
+        position = positions[-1]
+        skills = testDataHandler.skills_by_position(position)
+        id_skills = self.dataHandler.skills_by_id(id)
+        model = TfIdfBias(skills, testDataHandler, position)
+        all_ids, skill_list = self.dataHandler.all_skills()
+        relevant = self.get_relevant(all_ids, position, testDataHandler).astype(bool)
+        sorted_list = model.get_sorted(all_ids[relevant], skill_list[relevant])
         return sorted_list
