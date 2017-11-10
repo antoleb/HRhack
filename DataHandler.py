@@ -17,7 +17,7 @@ class DataHandler():
         """
         returns: list of srtings from self.skills
         """
-        return self.skills[skills.ID == id].TAGNAME.values
+        return self.skills[self.skills.ID == id].TAGNAME.values
 
     def positions_by_id(self, id):
         """
