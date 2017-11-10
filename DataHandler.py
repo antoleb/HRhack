@@ -57,7 +57,7 @@ class DataHandler:
         perf_col = ['2017 I Полугодие', '2016 II Полугодие', '2016 I Полугодие',
        '2015 II Полугодие', '2015 I Полугодие', '2014 II Полугодие',
        '2014 I Полугодие']
-        
+
         df['performance'] = df[perf_col].values.tolist()
         df['TAGNAME'] = [row[1] if type(row[1]) == list else list() for row in df['TAGNAME'].iteritems()]
         df['performance'] = [row[1] if type(row[1]) == list else list() for row in df['performance'].iteritems()]
@@ -86,7 +86,7 @@ class DataHandler:
         """
         if self.performance.loc[lambda df: df['ID'] == id, :]['Статус'].values[0] == 'Бывший сотрудник':
             return ['', '', 0]
-        info = self.movement.loc[self.movement.loc[lambda df: df['id']==id, :]['START_DATE'].idxmax(), :].values
+        info = self.movement.loc[self.movement.loc[lambda df: df['id'] == id, :]['START_DATE'].idxmax(), :].values
         today = pd.Timestamp(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
         delta = today - info[3]
         return [info[6], info[1], delta.round(freq='1440min').days]
