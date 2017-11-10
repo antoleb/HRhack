@@ -38,3 +38,4 @@ class Tester:
         relevant = self.get_relevant(all_ids, position, testDataHandler).astype(bool)
         sorted_list = model.get_sorted(all_ids[relevant], skill_list[relevant])
         return sorted_list
+

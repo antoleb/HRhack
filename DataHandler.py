@@ -111,7 +111,7 @@ class DataHandler:
         """
         returns: [id, position, full name, start date, end date]
         """
-        ar = self.movement.loc[lambda df: df['id'] == 42566, :][['id', 'position', 'FULL_NAME', 'START_DATE', 'END_DATE']].values
+        ar = self.movement.loc[lambda df: df['id'] == id, :][['id', 'position', 'FULL_NAME', 'START_DATE', 'END_DATE']].values
         ar = ar[np.argsort(ar[:,3], axis=0)]
         for i in range(ar.shape[0]-1):
             ar[i,4] = min(ar[i,4], ar[i+1,3])
