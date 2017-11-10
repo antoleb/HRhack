@@ -80,6 +80,22 @@ class DataHandler:
         df['Название обучения'] = [row[1] if type(row[1]) == list else list() for row in df['Название обучения'].iteritems()]
         return df['Название обучения'].reset_index().values
 
+    def first_start_time(self, id, position):
+        """
+        :param id:
+        :param position:
+        :return: first start time of id on position
+        """
+        return self.movement[(self.movement.full_position == position) & (self.movement.id == id)].START_DATE.min()
+
+    def last_start_time(self, id, position):
+        """
+        :param id:
+        :param position:
+        :return: last start time of id on position
+        """
+        return self.movement[(self.movement.full_position == position) & (self.movement.id == id)].START_DATE.max()
+
     def current_position_by_id(self, id):
         """
         returns: [department, position, work_time]
@@ -92,11 +108,22 @@ class DataHandler:
         return [info[6], info[1], delta.round(freq='1440min').days]
 
     def suggested_courses_by_id_and_position(self, id, position):
+        """
+        :param id:
+        :param position:
+        :return:  sorted list of suggested courses
+        """
         ids = self.movement[self.movement.full_position == position].id.unique()
         all_courses = self.courses[self.courses.id.isin(ids)]
         user_courses = self.courses[self.courses.id == id]
+        mask = np.zeros(all_courses.shape[0])
+        for _id in ids:
+            id_start_time = self.first_start_time(_id, position)
+            mask[all_courses.id == _id] = all_courses[all_courses.id == _id]['Дата окончания'] < id_start_time
+        all_courses = all_courses[mask.astype(bool)]
         need_courses = all_courses[~all_courses['Название обучения'].isin(user_courses)]
         sorted_courses = need_courses['Название обучения'].value_counts().index.values
+        return sorted_courses
 
     def remove_id(self, id):
         """
