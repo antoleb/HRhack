@@ -26,11 +26,11 @@ class DataHandler:
         """
         return self.movement[self.movement.id == id]['full_position'].values
 
-    def ids_by_position(self, position):
+    def ids_by_position(self, full_position):
         """
         returns: ids
         """
-        pass
+        return list( movement.loc[lambda df: df['full_position']==full_position, :]['id'] )
 
     def skills_by_position(self, position):
         """
