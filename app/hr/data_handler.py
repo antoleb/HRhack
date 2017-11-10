@@ -19,6 +19,9 @@ class DataHandler:
             good_positions = self.movement.full_position.value_counts()[self.movement.full_position.value_counts() > k].index
             self.movement = self.movement[self.movement.full_position.isin(good_positions)]
 
+    def unique_full_positions(self):
+        return self.movement.full_position.unique()
+
     def skills_by_id(self, id):
         """
         returns: list of srtings from self.skills
@@ -155,7 +158,12 @@ class DataHandler:
         srt = counts.argsort()[::-1]
         return np.concatenate([unique_moves[srt], counts[srt].reshape(-1,1)], axis=1)
 
-    def get_mean_work_time_and_contacts(self, id, current_pos, desiered_pos):
+    def get_mean_work_time_and_contacts(self, current_pos, desiered_pos):
+        """
+        :param current_pos:
+        :param desiered_pos:
+        :return:  [indxes, mean_time]
+        """
         current_pos_ids = self.movement[self.movement.full_position == current_pos].id.unique()
         desiered_pos_ids = self.movement[self.movement.full_position == desiered_pos].id.unique()
         both_ids = np.intersect1d(current_pos_ids, desiered_pos_ids)
@@ -166,7 +174,6 @@ class DataHandler:
             time_list.append(end - start)
 
         return both_ids, np.mean(time_list)
-
 
     def remove_id(self, id):
         """
