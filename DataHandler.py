@@ -91,6 +91,13 @@ class DataHandler:
         delta = today - info[3]
         return [info[6], info[1], delta.round(freq='1440min').days]
 
+    def suggested_courses_by_id_and_position(self, id, position):
+        ids = self.movement[self.movement.full_position == position].id.unique()
+        all_courses = self.courses[self.courses.id.isin(ids)]
+        user_courses = self.courses[self.courses.id == id]
+        need_courses = all_courses[~all_courses['Название обучения'].isin(user_courses)]
+        sorted_courses = need_courses['Название обучения'].value_counts().index.values
+
     def remove_id(self, id):
         """
         :param id:
