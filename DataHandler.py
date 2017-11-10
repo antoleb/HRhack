@@ -37,9 +37,9 @@ class DataHandler():
         """
         ids = self.ids_by_position(position)
         
-        pe = performance.loc[lambda df: df['ID'].isin(ids), :].set_index('ID')
-        sk = skills.loc[lambda df: df['ID'].isin(ids), :].groupby('ID').agg(lambda x: x.tolist())
-        df = pd.concat([pe,sk], axis=1)
+        pe = self.performance.loc[lambda df: df['ID'].isin(ids), :].set_index('ID')
+        sk = self.skills.loc[lambda df: df['ID'].isin(ids), :].groupby('ID').agg(lambda x: x.tolist())
+        df = pd.concat([pe, sk], axis=1)
         
         perf_col =['2017 I Полугодие', '2016 II Полугодие', '2016 I Полугодие',
        '2015 II Полугодие', '2015 I Полугодие', '2014 II Полугодие',
@@ -47,4 +47,4 @@ class DataHandler():
         df['performance'] = df[perf_col].values.tolist()
         
         need_col =['performance', 'TAGNAME']
-        return df1[need_col].reset_index().values
+        return df[need_col].reset_index().values
