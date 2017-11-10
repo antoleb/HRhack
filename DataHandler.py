@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-
+import time
+import datetime
 
 class DataHandler:
     def __init__(self, skills, courses, communication, movement, performance, k=3, remove=True):
@@ -9,6 +10,7 @@ class DataHandler:
         self.communication = communication
         self.movement = movement
         self.performance = performance
+        self.today = pd.Timestamp(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 
         self.movement['full_position'] = self.movement[['position', 'Department']].apply(lambda x: "{}/{}".format(x[0], x[1]),
     axis=1)
@@ -62,6 +64,31 @@ class DataHandler:
 
         need_col =['performance', 'TAGNAME']
         return df[need_col].reset_index().values
+
+    def courses_by_id(self, id):
+        """
+        returns: list of srtings from self.courses
+        """
+        return self.courses[self.courses.id == id]['Название обучения'].values
+    
+    def courses_by_position(self, position):
+        """
+        returns: [id, skills]
+        """
+        ids = self.ids_by_position(position)
+        df = self.courses.loc[lambda df: df['id'].isin(ids), :].groupby('id').agg(lambda x: x.tolist())
+        df['Название обучения'] = [row[1] if type(row[1]) == list else list() for row in df['Название обучения'].iteritems()]
+        return df['Название обучения'].reset_index().values
+
+    def current_position_by_id(self, id):
+        """
+        returns: [department, position, work_time]
+        """
+        if (self.performance.loc[lambda df: df['ID']==id, :]['Статус'].values[0] == 'Бывший сотрудник'):
+            return ['', '', 0]
+        info = self.movement.loc[movement.loc[lambda df: df['id']==id, :]['START_DATE'].idxmax(), :].values
+        delta = today - info[3]
+        return [info[6], info[1], delta.round(freq='1440min').days]
 
     def remove_id(self, id):
         """
