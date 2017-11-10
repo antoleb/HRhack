@@ -20,7 +20,14 @@ class DataHandler:
             self.movement = self.movement[self.movement.full_position.isin(good_positions)]
 
     def unique_full_positions(self):
-        return self.movement.full_position.unique()
+        all = self.movement.full_position.unique()
+        dic = dict()
+        for i in all:
+            p, d = i.split('/')
+            if d not in dic:
+                dic[d] = []
+            dic[d].append(p)
+        return dic
 
     def skills_by_id(self, id):
         """
