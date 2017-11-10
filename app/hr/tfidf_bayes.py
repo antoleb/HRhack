@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
-class TfIdfBias:
+class TfIdfBayes:
     def __init__(self, skills, dataHandler, pos, eps=1e-5):
         self.eps = eps
         self.dataHandler = dataHandler

@@ -12,7 +12,14 @@ class DataHandler:
         self.movement = movement
         self.performance = performance
 
-        self.movement['full_position'] = self.movement[['position', 'Department']].apply(lambda x: "{}/{}".format(x[0], x[1]),
+    def __init__(self, skills, courses, communication, movement, performance, k=3, remove=True):
+        self.skills = skills
+        self.courses = courses
+        self.communication = communication
+        self.movement = movement
+        self.performance = performance
+
+        self.movement['full_position'] = self.movement[['position', 'Department']].apply(lambda x:'{}/{}'.format(x[0], x[1]),
     axis=1)
 
         if remove:

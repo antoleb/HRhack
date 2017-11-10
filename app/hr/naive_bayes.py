@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-class NaiveBias:
+class NaiveBayes:
     def __init__(self, skills, eps=1e-5):
         self.eps = eps
         self.word_dict = dict()
