@@ -137,6 +137,25 @@ class DataHandler:
         sorted_courses = need_courses['Название обучения'].value_counts().index.values
         return sorted_courses
 
+    def suggested_positions_by_id(self, id):
+        """
+        returns: [position, department, count]
+        """
+        pos = self.current_position_by_id(id)
+        if (pos[2] == 0):
+            return np.empty()
+        idx = self.movement.loc[lambda df: df['position'] == pos[1],:].loc[lambda df: df['Department'] == pos[0],:].index
+        next_move = []
+        for i in idx:
+            if (i >= self.movement.last_valid_index() or (not (i in self.movement.index)) or (not (i+1 in self.movement.index))):
+                continue;
+            if (self.movement.loc[i+1]['id'] == self.movement.loc[i]['id'] and (self.movement.loc[i+1]['position'] != pos[1] or self.movement.loc[i+1]['Department'] != pos[0] )):
+                next_move.append([self.movement.loc[i+1]['position'], self.movement.loc[i+1]['Department']])
+        unique_moves, counts = np.unique(next_move, return_counts=True, axis=0)
+        srt = counts.argsort()[::-1]
+        return np.concatenate([unique_moves[srt], counts[srt].reshape(-1,1)], axis=1)
+
+
     def remove_id(self, id):
         """
         :param id:
