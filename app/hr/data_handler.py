@@ -49,7 +49,7 @@ class DataHandler:
         """
         returns: ids
         """
-        return self.movement.loc[lambda df: df['full_position']==full_position, :]['id'].values
+        return self.movement.loc[lambda df: df['full_position'] == full_position, :]['id'].values
 
     def skills_by_position(self, position):
         """
@@ -87,6 +87,22 @@ class DataHandler:
         df['Название обучения'] = [row[1] if type(row[1]) == list else list() for row in df['Название обучения'].iteritems()]
         return df['Название обучения'].reset_index().values
 
+    def first_start_time(self, id, position):
+        """
+        :param id:
+        :param position:
+        :return: first start time of id on position
+        """
+        return self.movement[(self.movement.full_position == position) & (self.movement.id == id)].START_DATE.min()
+
+    def last_start_time(self, id, position):
+        """
+        :param id:
+        :param position:
+        :return: last start time of id on position
+        """
+        return self.movement[(self.movement.full_position == position) & (self.movement.id == id)].START_DATE.max()
+
     def current_position_by_id(self, id):
         """
         returns: [department, position, work_time]
@@ -97,6 +113,36 @@ class DataHandler:
         today = pd.Timestamp(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
         delta = today - info[3]
         return [info[6], info[1], delta.round(freq='1440min').days]
+
+    def career_by_id(self, id):
+        """
+        returns: [id, position, full name, start date, end date]
+        """
+        ar = self.movement.loc[lambda df: df['id'] == 42566, :][['id', 'position', 'FULL_NAME', 'START_DATE', 'END_DATE']].values
+        ar = ar[np.argsort(ar[:,3], axis=0)]
+        for i in range(ar.shape[0]-1):
+            ar[i,4] = min(ar[i,4], ar[i+1,3])
+        if (self.current_position_by_id(id)[2] > 0): # if currently working set end date as today's date
+            ar[-1,4] = pd.Timestamp(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+        return ar
+
+    def suggested_courses_by_id_and_position(self, id, position):
+        """
+        :param id:
+        :param position:
+        :return:  sorted list of suggested courses
+        """
+        ids = self.movement[self.movement.full_position == position].id.unique()
+        all_courses = self.courses[self.courses.id.isin(ids)]
+        user_courses = self.courses[self.courses.id == id]
+        mask = np.zeros(all_courses.shape[0])
+        for _id in ids:
+            id_start_time = self.first_start_time(_id, position)
+            mask[all_courses.id == _id] = all_courses[all_courses.id == _id]['Дата окончания'] < id_start_time
+        all_courses = all_courses[mask.astype(bool)]
+        need_courses = all_courses[~all_courses['Название обучения'].isin(user_courses)]
+        sorted_courses = need_courses['Название обучения'].value_counts().index.values
+        return sorted_courses
 
     def remove_id(self, id):
         """
