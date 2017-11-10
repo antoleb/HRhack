@@ -3,7 +3,7 @@ import numpy as np
 
 
 class DataHandler:
-    def __init__(self, skills, courses, communication, movement, performance):
+    def __init__(self, skills, courses, communication, movement, performance, k=3, remove=True):
         self.skills = skills
         self.courses = courses
         self.communication = communication
@@ -12,6 +12,10 @@ class DataHandler:
 
         self.movement['full_position'] = self.movement[['position', 'Department']].apply(lambda x: "{}/{}".format(x[0], x[1]),
     axis=1)
+
+        if remove:
+            good_positions = self.movement.full_position.value_counts()[self.movement.full_position.value_counts() > k].index
+            self.movement = self.movement[self.movement.full_position.isin(good_positions)]
 
     def skills_by_id(self, id):
         """
@@ -69,5 +73,6 @@ class DataHandler:
             courses=self.courses,
             communication=self.communication,
             movement=self.movement[self.movement.id != id],
-            performance=self.performance
+            performance=self.performance,
+            remove=False
         )
