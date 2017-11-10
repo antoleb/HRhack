@@ -29,7 +29,7 @@ class DataHandler:
         result = []
         all_ids = self.skills.ID.unique()
         for id in all_ids:
-            result.append([self.skills_by_id(id)])
+            result.append(self.skills_by_id(id))
         return all_ids, np.array(result)
 
     def ids_by_position(self, full_position):

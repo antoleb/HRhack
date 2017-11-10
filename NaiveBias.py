@@ -25,22 +25,26 @@ class NaiveBias:
     def _build_one_hot_vector_by_string_(self, string):
         description = np.zeros(len(self.word_dict))
         for word in string.split():
-            description[self.word_dict[word]] = 1
+            if word in self.word_dict:
+                description[self.word_dict[word]] = 1
         return description
 
     def _build_one_hot_vector_by_list_(self, skill_list):
         description = np.zeros(len(self.word_dict))
         for skill in skill_list:
-            description = (description & self._build_one_hot_vector_by_string_(skill))
+            description += self._build_one_hot_vector_by_string_(skill)
+        description[description != 0] = 1
         return description
 
     def log_likehood(self, skill):
-        description = self._build_one_hot_vector_(skill)
+        description = self._build_one_hot_vector_by_list_(skill)
+        #return np.sum(np.log(self.freq_list) * description + np.log(1 - self.freq_list) * (1 - description))
         return np.sum(np.log(self.freq_list) * description + np.log(1 - self.freq_list) * (1 - description))
 
     def get_sorted(self, ids, skill_list):
         scores = []
         for skill in skill_list:
             scores.append(self.log_likehood(skill))
-        scores = np.array(scores)
+        #scores = np.array(scores)
+        return scores
         return ids[np.argsort(-scores)]
