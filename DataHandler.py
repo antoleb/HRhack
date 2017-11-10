@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-class DataHandler():
+class DataHandler:
     def __init__(self, skills, courses, communication, movement, performance):
         self.skills = skills
         self.courses = courses
@@ -25,6 +25,13 @@ class DataHandler():
         """
         return self.movement[self.movement.id == id]['full_position'].values
 
+    def all_skills(self):
+        result = []
+        all_ids = self.skills.ID.unique()
+        for id in all_ids:
+            result.append([self.skills_by_id(id)])
+        return all_ids, np.array(result)
+
     def ids_by_position(self, full_position):
         """
         returns: ids
@@ -36,15 +43,28 @@ class DataHandler():
         returns: [id, performance, skills]
         """
         ids = self.ids_by_position(position)
-        
-        pe = self.performance.loc[lambda df: df['ID'].isin(ids), :].set_index('ID')
-        sk = self.skills.loc[lambda df: df['ID'].isin(ids), :].groupby('ID').agg(lambda x: x.tolist())
+
+        pe = performance.loc[lambda df: df['ID'].isin(ids), :].set_index('ID')
+        sk = skills.loc[lambda df: df['ID'].isin(ids), :].groupby('ID').agg(lambda x: x.tolist())
         df = pd.concat([pe, sk], axis=1)
-        
+
         perf_col =['2017 I Полугодие', '2016 II Полугодие', '2016 I Полугодие',
        '2015 II Полугодие', '2015 I Полугодие', '2014 II Полугодие',
        '2014 I Полугодие']
         df['performance'] = df[perf_col].values.tolist()
-        
+
         need_col =['performance', 'TAGNAME']
-        return df[need_col].reset_index().values
+        return df1[need_col].reset_index().values
+
+    def remove_id(self, id):
+        """
+        :param id:
+        :return: new  DataHandler without any positions with such id
+        """
+        return DataHandler(
+            skills=self.skills,
+            courses=self.courses,
+            communication=self.communication,
+            movement=self.movement[self.movement.id != id],
+            performance=self.performance
+        )
