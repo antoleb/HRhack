@@ -64,7 +64,6 @@ ___
     "department": "name",
     "position": "name",
     "work_time": 12,
-    ...
 }
 ```
 ___

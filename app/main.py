@@ -7,4 +7,4 @@ app.config.from_object(config)
 
 socketio = SocketIO(app)
 
-from . import socketio_views
+from . import socket_endpoints

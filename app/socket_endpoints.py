@@ -83,12 +83,12 @@ def find_canditates(json):
 
 
 @socketio.on('get_all_positions')
-def all_positions():
+def get_all_positions():
     emit('all_positions', make_response(True, data_handler.unique_full_positions()))
 
 
 @socketio.on('get_all_ids')
-def all_ids():
+def get_all_ids():
     emit('all_ids', make_response(True, 'Nothing'))
 
 
@@ -104,5 +104,9 @@ def candidate_position_and_time(id_):
 
 @socketio.on('get_position_and_time')
 def get_position_and_time(json):
-    print(candidate_position_and_time(json['id']))
     emit('postition_and_time', make_response(True, candidate_position_and_time(json['id'])))
+
+
+@socketio.on('get_opportunities')
+def get_opportunities(json):
+    emit('opportunities', make_response(True, 'u tebya net vozmozhnostei, pidor'))
