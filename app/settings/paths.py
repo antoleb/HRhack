@@ -1,4 +1,4 @@
 import os
 
-DATA_DIR = os.path.join('/data')
+DATA_DIR = '/data'
 KROK_FILE = os.path.join(DATA_DIR, 'krok.xlsx')

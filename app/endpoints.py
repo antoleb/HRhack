@@ -1,9 +1,9 @@
-from flask_socketio import emit
+from flask import request, jsonify
 
 import pandas as pd
 
 from .hr import DataHandler, Finder
-from .main import socketio
+from .app import app
 from .settings.paths import KROK_FILE
 
 
@@ -59,37 +59,34 @@ finder = Finder(data_handler)
 
 
 def make_response(success, message):
-    return {
+    return jsonify({
         'status': 'success' if success else 'error',
         'message': message,
-    }
+    })
 
 
-@socketio.on('find_candidates')
-def find_canditates(json):
-    # try:
-    sought_department = json['department']
-    sought_position = json['position']
+@app.route('/find_candidates')
+def find_canditates():
+    sought_department = request.form['department']
+    sought_position = request.form['position']
 
-    sorted_candidates = finder.find_sorted_candidates(json['department'], json['position'])
+    sorted_candidates = finder.find_sorted_candidates(sought_department, sought_position)
     candidates = [
         make_candidate_dict(data_handler, candidate_id, sought_department, sought_position)
         for candidate_id in sorted_candidates[:5]
     ]
 
-    emit('candidates', make_response(True, candidates))
-    # except:
-    #     emit('candidates', make_response(False, 'Bad args'))
+    return make_response(True, candidates)
 
 
-@socketio.on('get_all_positions')
+@app.route('/get_all_positions')
 def get_all_positions():
-    emit('all_positions', make_response(True, data_handler.unique_full_positions()))
+    return make_response(True, data_handler.unique_full_positions())
 
 
-@socketio.on('get_all_ids')
+@app.route('/get_all_ids')
 def get_all_ids():
-    emit('all_ids', make_response(True, 'Nothing'))
+    return make_response(True, make_response(True, 'Nothing'))
 
 
 def candidate_position_and_time(id_):
@@ -101,10 +98,9 @@ def candidate_position_and_time(id_):
         'work_time': work_time,
     }
 
-
-@socketio.on('get_position_and_time')
-def get_position_and_time(json):
-    emit('postition_and_time', make_response(True, candidate_position_and_time(json['id'])))
+@app.route('/get_position_and_time')
+def get_position_and_time():
+    return make_response(True, candidate_position_and_time(request.form['id']))
 
 
 def suggested_positions_by_id(id_):
@@ -138,7 +134,6 @@ def suggested_positions_by_id(id_):
     return suggested_positions
 
 
-@socketio.on('get_suggested_positions')
-def get_opportunities(json):
-    print(suggested_positions_by_id((json['id'])))
-    emit('suggested_positions', make_response(True,  suggested_positions_by_id((json['id']))))
+@app.route('/get_suggested_positions')
+def get_opportunities():
+    return make_response(True,  suggested_positions_by_id((request.form['id'])))

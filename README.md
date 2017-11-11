@@ -15,7 +15,6 @@ To set your secret key for `socket.io` provide enviroment variable with docker r
 ___
 **request_name:** `find_canditates`\
 **args:** `department`, `position`\
-**response_name:** `canditates`\
 **returns:**
 ```json
 [
@@ -42,7 +41,6 @@ ___
 ___
 **request_name:** `get_all_positions`\
 **args:** -\
-**response_name:** `all_positions`\
 **returns:**
 ```json
 {
@@ -57,7 +55,6 @@ ___
 ___
 **request_name:** `get_position_and_time`\
 **args:** `id`
-**response_name:** `postition_and_time`\
 **returns:**
 ```json
 {
