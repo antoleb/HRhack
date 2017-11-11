@@ -110,6 +110,7 @@ def my_make_response(success, message):
 
 
 @app.route('/find_candidates')
+@crossdomain(origin='*')
 def find_canditates():
     sought_department = request.form['department']
     sought_position = request.form['position']
@@ -130,6 +131,7 @@ def get_all_positions():
 
 
 @app.route('/get_all_ids')
+@crossdomain(origin='*')
 def get_all_ids():
     return my_make_response(True, my_make_response(True, 'Nothing'))
 
@@ -144,6 +146,7 @@ def candidate_position_and_time(id_):
     }
 
 @app.route('/get_position_and_time')
+@crossdomain(origin='*')
 def get_position_and_time():
     print(type(request.form['id']))
     return my_make_response(True, candidate_position_and_time(request.form['id']))
@@ -181,5 +184,6 @@ def suggested_positions_by_id(id_):
 
 
 @app.route('/get_suggested_positions')
+@crossdomain(origin='*')
 def get_opportunities():
     return my_make_response(True, suggested_positions_by_id(request.form['id']))
