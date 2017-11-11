@@ -107,6 +107,38 @@ def get_position_and_time(json):
     emit('postition_and_time', make_response(True, candidate_position_and_time(json['id'])))
 
 
-@socketio.on('get_opportunities')
+def suggested_positions_by_id(id_):
+    real_candidate_info = candidate_position_and_time(id_)
+    suggested_positions = []
+
+    for suggested_position in data_handler.suggested_positions_by_id(id_):
+        desired_position = suggested_position[0]
+        desired_department = suggested_position[1]
+
+        desired_internal_position = finder.make_internal_position(desired_department, desired_position)
+        real_internal_position = finder.make_internal_position(
+            real_candidate_info['department'], real_candidate_info['position']
+        )
+
+        indexes, mean_time = data_handler.get_mean_work_time_and_contacts(
+            real_internal_position,
+            desired_internal_position
+        )
+
+        position_dict = {
+            'position': desired_position,
+            'department': desired_department,
+            'promotion_number': suggested_position[2],
+            'mean_time': mean_time.days,
+            'promoted_ids': list(map(int, indexes)),
+        }
+
+        suggested_positions.append(position_dict)
+
+    return suggested_positions
+
+
+@socketio.on('get_suggested_positions')
 def get_opportunities(json):
-    emit('opportunities', make_response(True, 'u tebya net vozmozhnostei, pidor'))
+    print(suggested_positions_by_id((json['id'])))
+    emit('suggested_positions', make_response(True,  suggested_positions_by_id((json['id']))))
