@@ -13,7 +13,7 @@ To set your secret key for `socket.io` provide enviroment variable with docker r
 ### Socket.io API
 
 ___
-**request_name:** `find_canditates`\
+**request_name:** `find_candidates`\
 **args:** `department`, `position`\
 **returns:**
 ```json
@@ -62,5 +62,21 @@ ___
     "position": "name",
     "work_time": 12,
 }
+```
+___
+**request_name:** `get_suggested_positions`\
+**args:** `id`
+**returns:**
+```json
+[
+    {
+        "position": "name",
+        "department": "name",
+        "promotion_number": 2,
+        "mean_time": 123,
+        "promoted_ids": [1, 2, 3]
+    }
+    ...
+]
 ```
 ___
