@@ -55,3 +55,16 @@ ___
 }
 ```
 ___
+**request_name:** `get_position_and_time`\
+**args:** `id`
+**response_name:** `postition_and_time`\
+**returns:**
+```json
+{
+    "department": "name",
+    "position": "name",
+    "work_time": 12,
+    ...
+}
+```
+___

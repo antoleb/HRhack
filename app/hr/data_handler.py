@@ -158,7 +158,7 @@ class DataHandler:
         next_move = []
         for i in idx:
             if (i >= self.movement.last_valid_index() or (not (i in self.movement.index)) or (not (i+1 in self.movement.index))):
-                continue;
+                continue
             if (self.movement.loc[i+1]['id'] == self.movement.loc[i]['id'] and (self.movement.loc[i+1]['position'] != pos[1] or self.movement.loc[i+1]['Department'] != pos[0] )):
                 next_move.append([self.movement.loc[i+1]['position'], self.movement.loc[i+1]['Department']])
         unique_moves, counts = np.unique(next_move, return_counts=True, axis=0)
@@ -171,6 +171,7 @@ class DataHandler:
         :param desiered_pos:
         :return:  [indxes, mean_time]
         """
+
         current_pos_ids = self.movement[self.movement.full_position == current_pos].id.unique()
         desiered_pos_ids = self.movement[self.movement.full_position == desiered_pos].id.unique()
         both_ids = np.intersect1d(current_pos_ids, desiered_pos_ids)

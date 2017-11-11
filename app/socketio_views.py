@@ -81,6 +81,28 @@ def find_canditates(json):
     # except:
     #     emit('candidates', make_response(False, 'Bad args'))
 
+
 @socketio.on('get_all_positions')
 def all_positions():
     emit('all_positions', make_response(True, data_handler.unique_full_positions()))
+
+
+@socketio.on('get_all_ids')
+def all_ids():
+    emit('all_ids', make_response(True, 'Nothing'))
+
+
+def candidate_position_and_time(id_):
+    department, position, work_time = data_handler.current_position_by_id(id_)
+
+    return {
+        'department': department,
+        'position': position,
+        'work_time': work_time,
+    }
+
+
+@socketio.on('get_position_and_time')
+def get_position_and_time(json):
+    print(candidate_position_and_time(json['id']))
+    emit('postition_and_time', make_response(True, candidate_position_and_time(json['id'])))
