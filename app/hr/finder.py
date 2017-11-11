@@ -25,7 +25,7 @@ class Finder:
         model = TfIdfBayes(skills, self._data_handler, internal_position)
 
         all_ids, skill_list = self._data_handler.all_skills()
-        relevant = self._get_relevant(all_ids, position, self._data_handler).astype(bool)
+        relevant = self._get_relevant(all_ids, internal_position, self._data_handler).astype(bool)
         sorted_candidates = model.get_sorted(all_ids[relevant], skill_list[relevant])
 
         return sorted_candidates
