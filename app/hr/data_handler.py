@@ -110,6 +110,7 @@ class DataHandler:
         """
         returns: [department, position, work_time]
         """
+
         if self.performance.loc[lambda df: df['ID'] == id, :]['Статус'].values[0] == 'Бывший сотрудник':
             return ['', '', 0]
         info = self.movement.loc[self.movement.loc[lambda df: df['id'] == id, :]['START_DATE'].idxmax(), :].values

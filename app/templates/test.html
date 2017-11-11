@@ -1,4 +1,28 @@
 <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript" charset="utf-8">
-    // нихера
+    var socket = io.connect();
+    // 54.205.147.81
+
+    socket.on('candidates', function(msg) {
+        console.log(msg);
+    });
+
+    socket.on('all_positions', function(msg) {
+        console.log(msg);
+    });
+
+    socket.on('postition_and_time', function(msg) {
+        console.log(msg);
+    });
+
+    socket.on('suggested_positions', function(msg) {
+        console.log(msg);
+    });
+
+    socket.on('connect', function() {
+        socket.emit('find_candidates', {position: "Системный инженер", department: "ДТК"});
+        socket.emit('get_all_positions')
+        socket.emit('get_position_and_time', {id: 43685})
+        socket.emit('get_suggested_positions', {id: 43685})
+    });
 </script>

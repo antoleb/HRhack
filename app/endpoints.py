@@ -1,10 +1,54 @@
-from flask import request, jsonify
+from flask import request, jsonify, make_response, current_app
+from datetime import timedelta
+from functools import update_wrapper
 
 import pandas as pd
 
 from .hr import DataHandler, Finder
 from .app import app
 from .settings.paths import KROK_FILE
+
+
+def crossdomain(origin=None, methods=None, headers=None,
+                max_age=21600, attach_to_all=True,
+                automatic_options=True):
+    if methods is not None:
+        methods = ', '.join(sorted(x.upper() for x in methods))
+    if headers is not None and not isinstance(headers, str):
+        headers = ', '.join(x.upper() for x in headers)
+    if not isinstance(origin, str):
+        origin = ', '.join(origin)
+    if isinstance(max_age, timedelta):
+        max_age = max_age.total_seconds()
+
+    def get_methods():
+        if methods is not None:
+            return methods
+
+        options_resp = current_app.make_default_options_response()
+        return options_resp.headers['allow']
+
+    def decorator(f):
+        def wrapped_function(*args, **kwargs):
+            if automatic_options and request.method == 'OPTIONS':
+                resp = current_app.make_default_options_response()
+            else:
+                resp = make_response(f(*args, **kwargs))
+            if not attach_to_all and request.method != 'OPTIONS':
+                return resp
+
+            h = resp.headers
+
+            h['Access-Control-Allow-Origin'] = origin
+            h['Access-Control-Allow-Methods'] = get_methods()
+            h['Access-Control-Max-Age'] = str(max_age)
+            if headers is not None:
+                h['Access-Control-Allow-Headers'] = headers
+            return resp
+
+        f.provide_automatic_options = False
+        return update_wrapper(wrapped_function, f)
+    return decorator
 
 
 def init_datahandler(krok_file=KROK_FILE):
@@ -58,7 +102,7 @@ data_handler = init_datahandler()
 finder = Finder(data_handler)
 
 
-def make_response(success, message):
+def my_make_response(success, message):
     return jsonify({
         'status': 'success' if success else 'error',
         'message': message,
@@ -76,17 +120,18 @@ def find_canditates():
         for candidate_id in sorted_candidates[:5]
     ]
 
-    return make_response(True, candidates)
+    return my_make_response(True, candidates)
 
 
 @app.route('/get_all_positions')
+@crossdomain(origin='*')
 def get_all_positions():
-    return make_response(True, data_handler.unique_full_positions())
+    return my_make_response(True, data_handler.unique_full_positions())
 
 
 @app.route('/get_all_ids')
 def get_all_ids():
-    return make_response(True, make_response(True, 'Nothing'))
+    return my_make_response(True, my_make_response(True, 'Nothing'))
 
 
 def candidate_position_and_time(id_):
@@ -100,7 +145,8 @@ def candidate_position_and_time(id_):
 
 @app.route('/get_position_and_time')
 def get_position_and_time():
-    return make_response(True, candidate_position_and_time(request.form['id']))
+    print(type(request.form['id']))
+    return my_make_response(True, candidate_position_and_time(request.form['id']))
 
 
 def suggested_positions_by_id(id_):
@@ -136,4 +182,4 @@ def suggested_positions_by_id(id_):
 
 @app.route('/get_suggested_positions')
 def get_opportunities():
-    return make_response(True,  suggested_positions_by_id((request.form['id'])))
+    return my_make_response(True, suggested_positions_by_id(request.form['id']))
