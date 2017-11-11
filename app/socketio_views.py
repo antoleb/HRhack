@@ -42,7 +42,7 @@ def make_candidate_dict(data_handler, id_, sought_department, sought_position):
             'position': career[1],
             'department': career[2],
             'start_timestamp': career[3].timestamp(),
-            'end_timestamp': career[4] if career[4] is None else career[3].timestamp(),
+            'end_timestamp': career[4] if career[4] is None else career[4].timestamp(),
         } for career in data_handler.career_by_id(id_)
     ]
 
