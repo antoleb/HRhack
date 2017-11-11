@@ -139,9 +139,9 @@ class DataHandler:
         all_courses = self.courses[self.courses.id.isin(ids)]
         user_courses = self.courses[self.courses.id == id]
         mask = np.zeros(all_courses.shape[0])
-        for _id in ids:
-            id_start_time = self.first_start_time(_id, position)
-            mask[all_courses.id == _id] = all_courses[all_courses.id == _id]['Дата окончания'] < id_start_time
+        for id_ in ids:
+            id_start_time = self.first_start_time(id_, position)
+            mask[all_courses.id == id_] = all_courses[all_courses.id == id_]['Дата окончания'] < id_start_time
         all_courses = all_courses[mask.astype(bool)]
         need_courses = all_courses[~all_courses['Название обучения'].isin(user_courses)]
         sorted_courses = need_courses['Название обучения'].value_counts().index.values
